@@ -19,39 +19,35 @@ EduTrack is a **C++-based Student Management System** that allows students, teac
 - Add new students to the system
 
 ### **For HOD**
+- Default HOD password= 123
 - Manage teacher records
 - Update teacher details
 - Oversee the entire student database
 
 ## File Structure
 - `Clg.cpp` - Main C++ source file implementing the system.
-- `student.txt` - Stores student records.
+   You have to create those 2 files in your system
+- `student.txt` - Stores student records. 
 - `teacher.txt` - Stores teacher records.
 
 ## How to Use
 1. **Compile the program:**
-   ```sh
+   ```
    g++ Clg.cpp -o edutrack
    ```
 2. **Run the program:**
-   ```sh
+   ```
    ./edutrack
    ```
 3. **Follow on-screen instructions** to sign up or log in as a student, teacher, or HOD.
 
 ## Sample Usage
 - To sign up as a student, enter your **name, roll number, and password**.
-- Teachers can log in with a **special password** to access student records.
+- Teachers can log in with a **special password** ("teacher") to access student records.
 - The HOD can manage both **students and teachers**.
 
-## Future Improvements
-- Add **file encryption** for better security.
-- Implement a **graphical user interface (GUI)**.
-- Support **database integration** (MySQL, SQLite).
 
 ## Author
 - Developed by **Omkar Waghmare**.
 
----
-Let me know if you need any modifications! 🚀
 
