@@ -95,7 +95,7 @@ public:
                          << "SE marks: " << se << endl
                          << "Percentage: " << per << "%" << endl;
                 }
-                if (attendance != 5)
+                if (attendance != 5 && attendance<100)
                 {
                     cout << "Attendance: " << attendance << "%" << endl;
                 }
@@ -183,19 +183,26 @@ public:
         return false;
     }
 };
+//fuction to convert uppercase string to lowercase
+string lower(string lname){
+    for(auto& n: lname){
+        n=tolower(n);
+    }
+    return lname;
+}
 //teacher file name
 string file2 = "teacher.txt";
 // Class representing a teacher with attributes like name, id number, password, and salary.
 class teacher : public student
 {
 protected:
-    string na, pa;
+    string na, pa,sub;
     int id, c;
     double salary;
 
 public:
     teacher() {}
-    teacher(string n, string p, int i = 0, double s = 0) : na(n), pa(p), id(i), salary(s) {}
+    teacher(string n, string p,string su, int i = 0, double s = 0) : na(n), pa(p),sub(su), id(i), salary(s) {}
     //Update student name and roll number
     void updatestname(string file1, string oname, string nname, int nroll)
     {
@@ -398,8 +405,12 @@ public:
         case 3:
             cout << "update attendance:";
             cin >> attendance;
+            if(attendance>100){
+                cout<<"do you have any limit?"<<endl;
+            }else{
             updatestattendance(file1, name, attendance);
             break;
+            }
         default:
             cout << "invalid choice!" << endl;
         }
@@ -414,7 +425,7 @@ public:
         }
         else
         {
-            file << na << "," << id << "," << pa << "," << salary << endl;
+            file << na << "," << id << "," << pa<<","<<sub << "," << salary << endl;
         }
     }
     //all teachers data access by HOD
@@ -428,12 +439,15 @@ public:
             getline(s, na, ',');
             s >> id;
             s.ignore();
+           
             getline(s, pa, ',');
+            s>>sub;
+            s.ignore();
             s >> salary;
-            cout << "name:" << na << " id:" << id << " salary:" << salary << "rs" << endl;
+            cout << "name:" << na << " id:" << id<<" subject:"<<sub << " salary:" << salary << "rs" << endl;
         }
     }
-    //only 1 teachers data access by HOD
+    //only 1 teachers data access by HOD or teacher view himself
     void readt(string file1, string fname)
     {
         ifstream file(file1);
@@ -445,10 +459,11 @@ public:
             s >> id;
             s.ignore();
             getline(s, pa, ',');
+            getline(s,sub,',');
             s >> salary;
             if (fname == na)
             {
-                cout << "name:" << na << " id:" << id << " salary:" << salary << "rs" << endl;
+                cout << "name:" << na << " id:" << id<<" subject:"<<sub << " salary:" << salary << "rs" << endl;
                 break;
             }
         }
@@ -469,10 +484,12 @@ public:
             s >> id;
             s.ignore();
             getline(s, pass, ',');
+            s>>sub;
+            s.ignore();
             s >> salary;
             if (name == fname)
             {
-                data.push_back(name + "," + to_string(id) + "," + pass + "," + to_string(nsalary));
+                data.push_back(name + "," + to_string(id) + "," + pass + "," + sub+ ","+ to_string(nsalary));
             }
             else
             {
@@ -488,7 +505,7 @@ public:
         cout << "Salary updated successfully!" << endl;
     }
     //Function change teacher name and id
-    void updateteachername(string file2, string oname, string nname, int nid)
+    void updateteachername(string file2, string oname, string nname,string nsub, int nid)
     {
         ifstream file(file2);
         vector<string> data;
@@ -502,10 +519,12 @@ public:
             s >> id;
             s.ignore();
             getline(s, pass, ',');
+            s>>sub;
+            s.ignore();
             s >> salary;
             if (name == oname)
             {
-                data.push_back(nname + "," + to_string(nid) + "," + pass + "," + to_string(salary));
+                data.push_back(nname + "," + to_string(nid) + "," + pass + "," +sub+ ","+ to_string(salary));
             }
             else
             {
@@ -524,7 +543,7 @@ public:
     {
 
         int c, sal;
-        string nm;
+        string nm,nsub;
         cout << "what do you want to update:\n1.details\n2.salary\nselect:";
         cin >> c;
         switch (c)
@@ -535,7 +554,9 @@ public:
             getline(cin, nm);
             cout << "change id number:";
             cin >> roll;
-            updateteachername(file2, name1, nm, roll);
+            cout<<"change subject:";
+            cin>>nsub;
+            updateteachername(file2, name1, nm,nsub, roll);
             break;
         case 2:
             cout << "change salary:";
@@ -563,7 +584,7 @@ void option(string prof, string file1, string file2, string name1 = "")
     student st;
     teacher t;
     hod h;
-    string n, nm;
+    string n, nm,sub;
     string temp;
     int c, a = 0, roll;
     if (prof == "student")
@@ -577,8 +598,8 @@ void option(string prof, string file1, string file2, string name1 = "")
             {
             case 1:
                 cout << "change name:";
-                
                 getline(cin, nm);
+                nm=lower(nm);
                 cout << "change roll number:";
                 cin >> roll;
                 t.updatestname(file1, name1, nm, roll);
@@ -611,9 +632,12 @@ void option(string prof, string file1, string file2, string name1 = "")
                 cout << "change name:";
                 cin.ignore();
                 getline(cin, nm);
+                nm=lower(nm);
                 cout << "change id number:";
                 cin >> roll;
-                t.updateteachername(file2, name1, nm, roll);
+                cout<<"change subject:";
+                cin>>sub;
+                t.updateteachername(file2, name1, nm,sub, roll);
                 temp = name1;
                 name1 = nm;
                 nm = temp;
@@ -628,6 +652,7 @@ void option(string prof, string file1, string file2, string name1 = "")
                 cout << "enter name to find:";
                 cin.ignore();
                 getline(cin, n);
+                n=lower(n);
                 if (st.check(file1, n))
                 {
                     t.readst(file1, n);
@@ -674,6 +699,7 @@ void option(string prof, string file1, string file2, string name1 = "")
                 cout << "enter name to find:";
                 cin.ignore();
                 getline(cin, n);
+                n=lower(n);
                 if (st.check(file2, n))
                 {
                     h.readt(file2, n);
@@ -700,6 +726,7 @@ void option(string prof, string file1, string file2, string name1 = "")
                 cout << "enter name to find:";
                 cin.ignore();
                 getline(cin, n);
+                n=lower(n);
                 if (st.check(file1, n))
                 {
                     t.readst(file1, n);
@@ -743,6 +770,7 @@ void signup(string file1, string file2, string s)
     }
     cout << "enter details\nenter name:";
     getline(cin, name);
+    name=lower(name);
     if (st.check(file, name))
     {
         cout << "user exits!!" << endl;
@@ -784,9 +812,12 @@ void signup(string file1, string file2, string s)
                 cout << "enter your salary:";
                 double salary;
                 cin >> salary;
+                string sub;
+                cout<<"enter your subject:";
+                cin>>sub;
                 cout << "remember your password" << " ' " << pass << " '" << endl
                      << "registered successfully!" << endl;
-                teacher t(name, pass, roll, salary);
+                teacher t(name, pass,sub, roll, salary);
                 t.writet(file2, name);
             }
             option(s, file1, file2, name);
@@ -816,6 +847,8 @@ string sign(string &file1, string &file2)
             cout << "who are you:\nstudent\t\tteacher\t\thod\t\texit" << endl
                  << "enter here:";
             cin >> s;
+            s=lower(s);
+            cout<<s<<endl;
             t = 0;
             if (s == "student" || s == "teacher")
             {
@@ -854,7 +887,7 @@ string sign(string &file1, string &file2)
                     {
                         cout << "enter name:";
                         getline(cin, name);
-
+                        name=lower(name);
                         if (st.check(file, name))
                         {
                             cout << "welcome back!\n";
