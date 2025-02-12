@@ -97,7 +97,7 @@ public:
                          << "SE marks: " << se << endl
                          << "Percentage: " << per << "%" << endl;
                 }
-                if (attendance != 5 && attendance < 100)
+                if (attendance > 5 && attendance < 100)
                 {
                     cout << "Attendance: " << attendance << "%" << endl;
                 }
@@ -958,7 +958,6 @@ string sign(string &file1, string &file2)
                     cout << "LOGIN" << endl;
                     cout << "1.log in\t2.sign up\t3.back" << endl;
                     cin >> a;
-                    cin.ignore();
                     if (s == "student")
                     {
                         file = "student.txt";
@@ -970,6 +969,7 @@ string sign(string &file1, string &file2)
 
                     if (a == 1)
                     {
+                        cin.ignore();
                         cout << "enter name:";
                         getline(cin, name);
                         name = lower(name);
