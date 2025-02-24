@@ -16,6 +16,7 @@ EduTrack is a **C++-based Student Management System** that allows students, teac
 ### **For Teachers**
 - Login and manage student data
 - Update student marks and attendance
+- search student by it's name or roll number
 - Add new students to the system
 
 ### **For HOD**
@@ -26,7 +27,7 @@ EduTrack is a **C++-based Student Management System** that allows students, teac
 
 ## File Structure
 - `Clg.cpp` - Main C++ source file implementing the system.
-   You have to create those 2 files in your system
+- You have to create those 2 files in your system
 - `student.txt` - Stores student records. 
 - `teacher.txt` - Stores teacher records.
 
