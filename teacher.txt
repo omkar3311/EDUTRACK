@@ -1,1 +1,1 @@
-Teachers data save here
+teacher data save here

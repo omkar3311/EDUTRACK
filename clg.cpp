@@ -12,9 +12,35 @@ protected:
 public:
     student() {};
     student(string a, string b, int c) : name(a), pass(b), roll(c), os(0), coa(0), cn(0), at(0), se(0), per(0), attendance(0) {}
+    // Function to Sort the student by Roll Number
+    void sortt(string file1)
+    {
+        vector<pair<int, string>> data;
+        ifstream file(file1);
+        string line;
+        while (getline(file, line))
+        {
+            string name, pass;
+            int roll;
+            stringstream s(line);
+            getline(s, name, ',');
+            s >> roll;
+            s.ignore();
+            data.push_back({roll, line});
+        }
+        file.close();
+        sort(data.begin(), data.end());
+        ofstream newfile(file1);
+        for (auto &it : data)
+        {
+            newfile << it.second << endl;
+        }
+        newfile.close();
+    }
     // Function to read student data from a file and display it
     void read(string file1)
     {
+        sortt(file1);
         ifstream file(file1);
         string line;
         while (getline(file, line))
@@ -51,7 +77,6 @@ public:
 
         file.close();
     }
-
     // Function to read only 1 student data
     void readst(string file1, string fname)
     {
@@ -112,7 +137,7 @@ public:
 
         file.close();
     }
-    //Function to check wheather searched line is string or int
+    // Function to check wheather searched line is string or int
     bool stringorint(string line)
     {
         for (auto l : line)
@@ -123,8 +148,8 @@ public:
             }
         }
     }
-    //Function to search student by name or roll
-    void search(string file1, string find)
+    // Function to search student by name or roll
+    string search(string file1, string find)
     {
         ifstream file(file1);
         string line;
@@ -137,13 +162,13 @@ public:
                 stringstream s(line);
                 string name, pass;
                 int roll;
-                double per;
                 getline(s, name, ',');
                 s >> roll;
                 s.ignore();
                 if (froll == roll)
                 {
                     readst(file1, name);
+                    return name;
                 }
             }
         }
@@ -234,6 +259,7 @@ string lower(string lname)
     }
     return lname;
 }
+// Function to make name 1st letter Capital
 string initialcap(string name)
 {
     bool space = true;
@@ -286,7 +312,7 @@ public:
             getline(s, pass);
             if (name == oname)
             {
-                data.push_back(nname + "," + to_string(nroll) + pass);
+                data.push_back(nname + "," + to_string(nroll) + "," + pass);
             }
             else
             {
@@ -312,7 +338,7 @@ public:
         {
             stringstream s(line);
             string name, pass;
-            int roll, os, coa, cn, at, se, attendance;
+            int roll, os, coa, cn, at, se, attendance=0;
             double per;
             getline(s, name, ',');
             s >> roll;
@@ -361,7 +387,7 @@ public:
         {
             stringstream s(line);
             string name, pass;
-            int roll, os, coa, cn, at, se, attendance;
+            int roll=0, os=0, coa=0, cn=0, at=0, se=0, attendance;
             double per;
             getline(s, name, ',');
             s >> roll;
@@ -510,10 +536,8 @@ public:
             getline(s, na, ',');
             s >> id;
             s.ignore();
-
             getline(s, pa, ',');
-            s >> sub;
-            s.ignore();
+            getline(s, sub, ',');
             s >> salary;
             cout << "name:" << initialcap(na) << " id:" << id << " subject:" << sub << " salary:" << salary << "rs" << endl;
         }
@@ -610,6 +634,7 @@ public:
         }
         cout << "Data updated successfully!" << endl;
     }
+
     void updateteacherdata(string file2, string name1)
     {
 
@@ -693,9 +718,10 @@ void option(string prof, string file1, string file2, string name1 = "")
     else if (prof == "teacher")
     {
         char a;
+        int s1;
         while (a != 1)
         {
-            cout << "1.change profile\n2.view profile\n3.detail of all class\n4.detail of student\n5.add student\n6.back:";
+            cout << "1.change profile\n2.view profile\n3.Student\n4.back:";
             cin >> c;
             switch (c)
             {
@@ -717,45 +743,58 @@ void option(string prof, string file1, string file2, string name1 = "")
                 t.readt(file2, name1);
                 break;
             case 3:
+            cout<<"options for Students:\n1.detail of all class\n2.detail of student\n3.add student\n4.back:";
+            cin>>s1;
+            switch(s1){
+                case 1:
                 t.read(file1);
                 break;
-            case 4:
-                int nn;
-                cout << "search student(name/roll):";
-                cin.ignore();
-                getline(cin, n);
-                if (st.stringorint(n))
-                {
-                    nn = stoi(n);
-                }
-                else
-                {
-                    n = lower(n);
-                }
-                if (st.check(file1, n) || st.croll(file1, nn))
-                {
-                    // t.readst(file1, n);
-                    if(st.stringorint(n)){
-                    t.search(file1,n);}
-                    else{
-                        t.search(file1,n);
-                    }
-                    cout << "do you want to update(y/n):";
-                    cin >> a;
-                    if (a == 'y')
+                case 2:
+                    int nn;
+                    cout << "search student(name/roll):";
+                    cin.ignore();
+                    getline(cin, n);
+                    if (st.stringorint(n))
                     {
-                        t.updatestudentdata(file1, n);
+                        nn = stoi(n);
                     }
-                }
-                else
-                {
-                    cout << "no one is there!" << endl;
-                }
-                break;
-            case 5:
-                signup(file1, file2, "student");
-                break;
-            case 6:
+                    else
+                    {
+                        n = lower(n);
+                    }
+                    if (st.check(file1, n) || st.croll(file1, nn))
+                    {
+                        if (st.stringorint(n))
+                        {
+                            n=t.search(file1, n);
+                        }
+                        else
+                        {
+                            t.search(file1, n);
+                        }
+                        cout << "do you want to update(y/n):";
+                        cin >> a;
+                        if (a == 'y')
+                        {
+                            t.updatestudentdata(file1, n);
+                        }
+                    }
+                    else
+                    {
+                        cout << "no one is there!" << endl;
+                    }
+                    break;
+                case 3:
+                    signup(file1, file2, "student");
+                    break;
+                case 4:
+                    break;
+                default:
+                    cout << "Invalid choice!" << endl;
+                
+            }
+            break;
+            case 4:
                 a = 1;
                 break;
             default:
@@ -768,68 +807,89 @@ void option(string prof, string file1, string file2, string name1 = "")
         while (a != 1)
         {
             char aa;
-            cout << "1.view profile\n2.detail of all teachers\n3.detail of teacher\n4.add teacher\n"
-                 << "5.detail of all class\n6.detail of student\n7.add student\n8.back:";
+            int t1, s1;
+            cout << "1.view profile\n2.Teacher\n3.Student\n4.back:";
             cin >> c;
             switch (c)
             {
             case 1:
-                cout << "name:" << h.name << " salary:" << h.salary << endl;
+                cout << "name:" << h.name << " salary:" << h.salary << "rs" << endl;
                 break;
             case 2:
-                h.readt(file2);
+                cout << "options for Teachers:\n1.detail of all teachers\n2.detail of teacher\n3.add teacher\n4.back:";
+                cin >> t1;
+                switch (t1)
+                {
+                case 1:
+                    h.readt(file2);
+                    break;
+                case 2:
+                    cout << "enter name to find:";
+                    cin.ignore();
+                    getline(cin, n);
+                    n = lower(n);
+                    if (st.check(file2, n))
+                    {
+                        h.readt(file2, n);
+                        cout << "do you want to update(y/n):";
+                        cin >> a;
+                        if (a == 'y')
+                        {
+                            t.updateteacherdata(file2, n);
+                        }
+                    }
+                    else
+                    {
+                        cout << "no one is there!" << endl;
+                    }
+                    break;
+                case 3:
+                    signup(file1, file2, "teacher");
+                    break;
+                case 4:
+                    break;
+                default:
+                    cout << "Invalid choice!" << endl;
+                }
                 break;
             case 3:
-                cout << "enter name to find:";
-                cin.ignore();
-                getline(cin, n);
-                n = lower(n);
-                if (st.check(file2, n))
+                cout << "options for Students:\n1.detail of all class\n2.detail of student\n3.add student\n4.back:";
+                cin >> s1;
+                switch (s1)
                 {
-                    h.readt(file2, n);
-                    cout << "do you want to update(y/n):";
-                    cin >> a;
-                    if (a == 'y')
+                case 1:
+                    t.read(file1);
+                    break;
+                case 2:
+                    cout << "enter name to find:";
+                    cin.ignore();
+                    getline(cin, n);
+                    n = lower(n);
+                    if (st.check(file1, n))
                     {
-                        t.updateteacherdata(file2, n);
+                        t.readst(file1, n);
+                        cout << "do you want to update(y/n):";
+                        cin >> a;
+                        if (aa == 'y' || aa == '1')
+                        {
+                            t.updatestudentdata(file1, n);
+                        }
                     }
+                    else
+                    {
+                        cout << "no one is there!" << endl;
+                    }
+                    break;
+                case 3:
+                    signup(file1, file2, "student");
+                    break;
+                case 4:
+                    break;
+                default:
+                    cout << "Invalid choice!" << endl;
                 }
-                else
-                {
-                    cout << "no one is there!" << endl;
-                }
-
                 break;
             case 4:
-                signup(file1, file2, "teacher");
-                break;
-            case 5:
-                t.read(file1);
-                break;
-            case 6:
-                cout << "enter name to find:";
-                cin.ignore();
-                getline(cin, n);
-                n = lower(n);
-                if (st.check(file1, n))
-                {
-                    t.readst(file1, n);
-                    cout << "do you want to update(y/n):";
-                    cin >> a;
-                    if (aa == 'y'||aa == '1')
-                    {
-                        t.updatestudentdata(file1, n);
-                    }
-                }
-                else
-                {
-                    cout << "no one is there!" << endl;
-                }
-                break;
-            case 7:
-                signup(file1, file2, "student");
-                break;
-            case 8:
                 a = 1;
                 break;
             default:
@@ -856,6 +916,8 @@ void signup(string file1, string file2, string s)
     cout << "enter details\nenter name:";
     getline(cin, name);
     name = lower(name);
+    int roll, id;
+    bool rnum = false;
     if (st.check(file, name))
     {
         cout << "user exits!!" << endl;
@@ -866,46 +928,56 @@ void signup(string file1, string file2, string s)
         {
 
             cout << "enter roll number:";
+            cin >> roll;
+            if (roll < 22001 || roll > 22075)
+            {
+                rnum = true;
+            }
         }
         else if (s == "teacher")
         {
-
             cout << "enter id number:";
+            cin >> id;
         }
-        int roll;
-        cin >> roll;
         if (st.croll(file, roll))
         {
             cout << "roll number taken!" << endl;
         }
         else
         {
-            cout << "create password:";
-            cin >> pass;
-            if (s == "student")
+            if (rnum)
             {
-
-                cout << "remember your password" << " ' " << pass << " '" << endl
-                     << "registered successfully!" << endl;
-
-                student st(name, pass, roll);
-                st.write(file1, name, roll);
+                cout << "Invalid roll number!" << endl;
             }
-            else if (s == "teacher")
+            else
             {
+                cout << "create password:";
+                cin >> pass;
+                if (s == "student")
+                {
 
-                cout << "enter your salary:";
-                double salary;
-                cin >> salary;
-                string sub;
-                cout << "enter your subject:";
-                cin >> sub;
-                cout << "remember your password" << " ' " << pass << " '" << endl
-                     << "registered successfully!" << endl;
-                teacher t(name, pass, sub, roll, salary);
-                t.writet(file2, name);
+                    cout << "remember your password" << " ' " << pass << " '" << endl
+                         << "registered successfully!" << endl;
+
+                    student st(name, pass, roll);
+                    st.write(file1, name, roll);
+                }
+                else if (s == "teacher")
+                {
+
+                    cout << "enter your salary:";
+                    double salary;
+                    cin >> salary;
+                    string sub;
+                    cout << "enter your subject:";
+                    cin >> sub;
+                    cout << "remember your password" << " ' " << pass << " '" << endl
+                         << "registered successfully!" << endl;
+                    teacher t(name, pass, sub, id, salary);
+                    t.writet(file2, name);
+                }
+                option(s, file1, file2, name);
             }
-            option(s, file1, file2, name);
         }
     }
 }
@@ -933,7 +1005,6 @@ string sign(string &file1, string &file2)
                  << "enter here:";
             cin >> s;
             s = lower(s);
-            cout << s << endl;
             t = 0;
             if (s == "student" || s == "teacher")
             {
@@ -944,7 +1015,7 @@ string sign(string &file1, string &file2)
                         cout << "enter teacher special password:";
                         cin.ignore();
                         getline(cin, tea);
-                        if (tea == "teacher"|| tea=="123")
+                        if (tea == "teacher" || tea == "123")
                         {
                             file = "teacher.txt";
                             t = 1;
@@ -958,7 +1029,7 @@ string sign(string &file1, string &file2)
                     cout << "LOGIN" << endl;
                     cout << "1.log in\t2.sign up\t3.back" << endl;
                     cin >> a;
-                    
+
                     if (s == "student")
                     {
                         file = "student.txt";
